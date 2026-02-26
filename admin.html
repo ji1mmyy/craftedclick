@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CraftedClick — Admin Panel</title>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface2: #1a1a1a;
+      --border: #2a2a2a;
+      --yellow: #f5c518;
+      --white: #f0f0f0;
+      --gray: #888;
+      --red: #ef4444;
+      --green: #22c55e;
+      --radius: 10px;
+      --font: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--white); font-family: var(--font); font-size: 15px; min-height: 100vh; }
+
+    /* ── LOGIN SCREEN ── */
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .login-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .login-logo {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+    .login-logo span { color: var(--yellow); }
+    .login-sub { color: var(--gray); font-size: 13px; margin-bottom: 32px; }
+    .login-box input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--white);
+      font-size: 15px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: var(--font);
+    }
+    .login-box input:focus { border-color: var(--yellow); }
+    .login-btn {
+      width: 100%;
+      background: var(--yellow);
+      color: #000;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .login-btn:hover { opacity: 0.88; }
+    .login-error { color: var(--red); font-size: 13px; margin-top: 12px; display: none; }
+
+    /* ── ADMIN PANEL ── */
+    #admin-panel { display: none; }
+
+    .admin-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .admin-logo { font-size: 20px; font-weight: 800; letter-spacing: 2px; }
+    .admin-logo span { color: var(--yellow); }
+    .admin-badge { background: var(--yellow); color: #000; font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; }
+    .logout-btn { background: transparent; border: 1px solid var(--border); color: var(--gray); font-size: 13px; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-family: var(--font); }
+    .logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+    .admin-body { max-width: 1200px; margin: 0 auto; padding: 40px 32px; }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 4px; margin-bottom: 36px; background: var(--surface); padding: 6px; border-radius: 10px; width: fit-content; }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--gray);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 24px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font);
+    }
+    .tab-btn.active { background: var(--yellow); color: #000; }
+    .tab-btn:not(.active):hover { color: var(--white); }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Section headings */
+    .section-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .section-desc { color: var(--gray); font-size: 13px; margin-bottom: 28px; line-height: 1.5; }
+
+    /* ── UPLOAD AREA ── */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 48px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 28px;
+    }
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--yellow);
+      background: rgba(245,197,24,0.04);
+    }
+    .upload-icon { font-size: 40px; margin-bottom: 12px; }
+    .upload-zone h3 { font-size: 16px; margin-bottom: 6px; }
+    .upload-zone p { color: var(--gray); font-size: 13px; }
+    .upload-zone input { display: none; }
+
+    .upload-progress { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 20px; }
+    .progress-bar-wrap { background: var(--border); border-radius: 4px; height: 6px; margin-top: 10px; overflow: hidden; }
+    .progress-bar { background: var(--yellow); height: 100%; width: 0%; transition: width 0.3s; border-radius: 4px; }
+
+    /* ── DRAG-TO-REORDER GRID ── */
+    .reorder-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .reorder-item {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid var(--border);
+      cursor: grab;
+      transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+      background: var(--surface2);
+      user-select: none;
+    }
+    .reorder-item:hover { border-color: var(--yellow); }
+    .reorder-item.dragging {
+      opacity: 0.4;
+      cursor: grabbing;
+      transform: scale(0.97);
+    }
+    .reorder-item.drag-over {
+      border-color: var(--yellow);
+      box-shadow: 0 0 0 3px rgba(245,197,24,0.3);
+      transform: scale(1.02);
+    }
+    .reorder-item img { width: 100%; aspect-ratio: 16/9; object-fit: cover; pointer-events: none; display: block; }
+    .reorder-item .item-label {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,0.75);
+      font-size: 11px;
+      color: var(--gray);
+      padding: 6px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .item-remove {
+      background: none;
+      border: none;
+      color: var(--red);
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+      padding: 0;
+      transition: opacity 0.2s;
+    }
+    .item-remove:hover { opacity: 0.7; }
+    .drag-handle { color: var(--gray); font-size: 12px; }
+
+    /* ── SAVE BUTTON ── */
+    .save-bar {
+      position: sticky;
+      bottom: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .save-status { font-size: 13px; color: var(--gray); }
+    .save-status.saved { color: var(--green); }
+    .save-status.unsaved { color: var(--yellow); }
+    .save-btn {
+      background: var(--yellow);
+      color: #000;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px 32px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      font-family: var(--font);
+    }
+    .save-btn:hover { opacity: 0.88; }
+    .view-site-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-size: 14px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      font-family: var(--font);
+      text-decoration: none;
+      display: inline-block;
+    }
+    .view-site-btn:hover { border-color: var(--white); }
+
+    /* ── CODE OUTPUT ── */
+    .code-output {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      color: #e6edf3;
+      overflow-x: auto;
+      white-space: pre;
+      margin-bottom: 16px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .copy-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-size: 13px;
+      padding: 10px 20px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font);
+    }
+    .copy-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+    .copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+    /* Instructions box */
+    .info-box {
+      background: rgba(245,197,24,0.06);
+      border: 1px solid rgba(245,197,24,0.2);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+    .info-box h4 { font-size: 14px; color: var(--yellow); margin-bottom: 8px; }
+    .info-box ol { padding-left: 20px; color: var(--gray); font-size: 13px; line-height: 2; }
+    .info-box code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-size: 12px; color: var(--white); }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       LOGIN SCREEN
+  ══════════════════════════════════════════ -->
+  <div id="login-screen">
+    <div class="login-box">
+      <div class="login-logo">Crafted<span>Click</span></div>
+      <div class="login-sub">Admin Panel — Authorized Access Only</div>
+
+      <input type="password" id="password-input" placeholder="Enter password" />
+      <button class="login-btn" onclick="attemptLogin()">Sign In</button>
+      <div class="login-error" id="login-error">Incorrect password. Try again.</div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       ADMIN PANEL
+  ══════════════════════════════════════════ -->
+  <div id="admin-panel">
+
+    <div class="admin-header">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <div class="admin-logo">Crafted<span>Click</span></div>
+        <div class="admin-badge">Admin</div>
+      </div>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <a href="index.html" target="_blank" class="view-site-btn">View Site ↗</a>
+        <button class="logout-btn" onclick="logout()">Log Out</button>
+      </div>
+    </div>
+
+    <div class="admin-body">
+
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('marquee', this)">🎞 Marquee Images</button>
+        <button class="tab-btn" onclick="switchTab('gallery', this)">🖼 Gallery Images</button>
+        <button class="tab-btn" onclick="switchTab('upload', this)">⬆️ Upload New Images</button>
+        <button class="tab-btn" onclick="switchTab('export', this)">💾 Save & Export</button>
+      </div>
+
+
+      <!-- ── TAB: MARQUEE ── -->
+      <div class="tab-panel active" id="tab-marquee">
+        <div class="section-title">Marquee Scroll Images</div>
+        <div class="section-desc">
+          These images appear in the two auto-scrolling rows at the top of your site.<br>
+          <strong>Drag to reorder</strong> them. Click ✕ to remove an image from the marquee.
+        </div>
+        <div class="reorder-grid" id="marquee-grid"></div>
+      </div>
+
+
+      <!-- ── TAB: GALLERY ── -->
+      <div class="tab-panel" id="tab-gallery">
+        <div class="section-title">Portfolio Gallery Images</div>
+        <div class="section-desc">
+          These images appear in the "Our Work" gallery section.<br>
+          <strong>Drag to reorder</strong> them. Click ✕ to remove an image from the gallery.
+        </div>
+        <div class="reorder-grid" id="gallery-grid-admin"></div>
+      </div>
+
+
+      <!-- ── TAB: UPLOAD ── -->
+      <div class="tab-panel" id="tab-upload">
+        <div class="section-title">Upload New Images</div>
+        <div class="section-desc">Upload new thumbnail images to add them to your project.</div>
+
+        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+          <input type="file" id="file-input" accept="image/*" multiple onchange="handleFileUpload(this.files)" />
+          <div class="upload-icon">📁</div>
+          <h3>Click to browse or drag & drop images here</h3>
+          <p>Supports JPG, PNG, WebP — images will be added to both the marquee and gallery</p>
+        </div>
+
+        <div class="upload-progress" id="upload-progress">
+          <div id="upload-label">Preparing images...</div>
+          <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+        </div>
+
+        <div class="info-box">
+          <h4>📋 How uploaded images work</h4>
+          <ol>
+            <li>Select your images above — they'll be previewed instantly</li>
+            <li>Go to <strong>Save & Export</strong> tab and copy the new <code>data.js</code> code</li>
+            <li>Replace your <code>data.js</code> file with the copied code</li>
+            <li>Copy your new image files into the <code>images/</code> folder in your project</li>
+            <li>Push to GitHub — your site updates automatically</li>
+          </ol>
+        </div>
+      </div>
+
+
+      <!-- ── TAB: EXPORT ── -->
+      <div class="tab-panel" id="tab-export">
+        <div class="section-title">Save & Export</div>
+        <div class="section-desc">Copy the code below and replace the contents of your <code>data.js</code> file with it. Then push to GitHub.</div>
+
+        <div class="info-box">
+          <h4>🚀 How to apply your changes</h4>
+          <ol>
+            <li>Click <strong>Copy Code</strong> below</li>
+            <li>Open <code>data.js</code> in VS Code</li>
+            <li>Select all (<code>Ctrl+A</code>) and paste (<code>Ctrl+V</code>)</li>
+            <li>Save the file (<code>Ctrl+S</code>)</li>
+            <li>In Git Bash run: <code>git add . && git commit -m "update images" && git push</code></li>
+            <li>Your live site updates in ~30 seconds ✅</li>
+          </ol>
+        </div>
+
+        <button class="copy-btn" id="copy-btn" onclick="copyCode()">📋 Copy data.js Code</button>
+        <br><br>
+        <div class="code-output" id="code-output">Click "Copy data.js Code" to generate your updated file...</div>
+      </div>
+
+    </div><!-- /admin-body -->
+
+    <!-- Sticky save bar -->
+    <div class="save-bar">
+      <div class="save-status unsaved" id="save-status">● Unsaved changes</div>
+      <div style="display:flex; gap:10px;">
+        <button class="save-btn" onclick="generateAndShowCode()">Generate data.js →</button>
+      </div>
+    </div>
+
+  </div><!-- /admin-panel -->
+
+
+  <script src="data.js"></script>
+
+  <script>
+    // ══════════════════════════════════════════════════
+    // CONFIGURATION — change your password here
+    // ══════════════════════════════════════════════════
+    const ADMIN_PASSWORD = 'craftedclick2025';
+
+    // ══════════════════════════════════════════════════
+    // STATE
+    // ══════════════════════════════════════════════════
+    let marqueeList = [];
+    let galleryList = [];
+    let dragSrc = null;
+    let dragTarget = null;
+
+    // ══════════════════════════════════════════════════
+    // LOGIN
+    // ══════════════════════════════════════════════════
+    // Allow pressing Enter to log in
+    document.getElementById('password-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') attemptLogin();
+    });
+
+    function attemptLogin() {
+      const val = document.getElementById('password-input').value;
+      if (val === ADMIN_PASSWORD) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        initAdmin();
+      } else {
+        document.getElementById('login-error').style.display = 'block';
+        document.getElementById('password-input').value = '';
+      }
+    }
+
+    function logout() {
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('admin-panel').style.display = 'none';
+      document.getElementById('password-input').value = '';
+    }
+
+    // ══════════════════════════════════════════════════
+    // INIT — load current data from data.js
+    // ══════════════════════════════════════════════════
+    function initAdmin() {
+      marqueeList = [...SITE_DATA.marqueeImages];
+      galleryList = [...SITE_DATA.galleryImages];
+      renderGrid('marquee-grid', marqueeList);
+      renderGrid('gallery-grid-admin', galleryList);
+    }
+
+    // ══════════════════════════════════════════════════
+    // TABS
+    // ══════════════════════════════════════════════════
+    function switchTab(name, btn) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      btn.classList.add('active');
+      if (name === 'export') generateAndShowCode();
+    }
+
+    // ══════════════════════════════════════════════════
+    // RENDER DRAG-TO-REORDER GRID
+    // ══════════════════════════════════════════════════
+    function renderGrid(containerId, list) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+
+      list.forEach((src, index) => {
+        const item = document.createElement('div');
+        item.className = 'reorder-item';
+        item.draggable = true;
+        item.dataset.index = index;
+
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = '';
+
+        const label = document.createElement('div');
+        label.className = 'item-label';
+
+        const handle = document.createElement('span');
+        handle.className = 'drag-handle';
+        handle.textContent = '⠿ drag';
+
+        const filename = document.createElement('span');
+        filename.textContent = src.split('/').pop();
+        filename.style.cssText = 'flex:1; text-align:center; font-size:10px;';
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'item-remove';
+        removeBtn.textContent = '✕';
+        removeBtn.onclick = (e) => {
+          e.stopPropagation();
+          removeItem(containerId, list, index);
+        };
+
+        label.appendChild(handle);
+        label.appendChild(filename);
+        label.appendChild(removeBtn);
+        item.appendChild(img);
+        item.appendChild(label);
+
+        // ── DRAG EVENTS ──
+        item.addEventListener('dragstart', e => {
+          dragSrc = item;
+          item.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+
+        item.addEventListener('dragend', () => {
+          item.classList.remove('dragging');
+          container.querySelectorAll('.reorder-item').forEach(i => i.classList.remove('drag-over'));
+        });
+
+        item.addEventListener('dragover', e => {
+          e.preventDefault();
+          if (item !== dragSrc) {
+            container.querySelectorAll('.reorder-item').forEach(i => i.classList.remove('drag-over'));
+            item.classList.add('drag-over');
+            dragTarget = item;
+          }
+        });
+
+        item.addEventListener('drop', e => {
+          e.preventDefault();
+          if (dragSrc && dragSrc !== item) {
+            const fromIdx = parseInt(dragSrc.dataset.index);
+            const toIdx   = parseInt(item.dataset.index);
+            // Reorder the array
+            const moved = list.splice(fromIdx, 1)[0];
+            list.splice(toIdx, 0, moved);
+            markUnsaved();
+            renderGrid(containerId, list);
+          }
+        });
+
+        container.appendChild(item);
+      });
+    }
+
+    function removeItem(containerId, list, index) {
+      list.splice(index, 1);
+      markUnsaved();
+      renderGrid(containerId, list);
+    }
+
+    // ══════════════════════════════════════════════════
+    // FILE UPLOAD
+    // ══════════════════════════════════════════════════
+    // Drag-and-drop onto upload zone
+    const uploadZone = document.getElementById('upload-zone');
+    uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+    uploadZone.addEventListener('drop', e => {
+      e.preventDefault();
+      uploadZone.classList.remove('dragover');
+      handleFileUpload(e.dataTransfer.files);
+    });
+
+    function handleFileUpload(files) {
+      if (!files.length) return;
+
+      const progress = document.getElementById('upload-progress');
+      const bar = document.getElementById('progress-bar');
+      const label = document.getElementById('upload-label');
+      progress.style.display = 'block';
+
+      let done = 0;
+      const total = files.length;
+
+      Array.from(files).forEach(file => {
+        if (!file.type.startsWith('image/')) { done++; return; }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const src = e.target.result; // base64 preview
+          // Use the actual filename for the path reference
+          const path = 'images/' + file.name;
+
+          // Add to both lists if not already present
+          if (!marqueeList.includes(path)) marqueeList.push(path);
+          if (!galleryList.includes(path)) galleryList.push(path);
+
+          done++;
+          bar.style.width = (done / total * 100) + '%';
+          label.textContent = `Added ${done} of ${total} images...`;
+
+          if (done === total) {
+            setTimeout(() => {
+              progress.style.display = 'none';
+              bar.style.width = '0%';
+              renderGrid('marquee-grid', marqueeList);
+              renderGrid('gallery-grid-admin', galleryList);
+              markUnsaved();
+              label.textContent = `✅ ${total} image(s) added! Go to "Save & Export" to apply changes.`;
+              progress.style.display = 'block';
+              setTimeout(() => { progress.style.display = 'none'; }, 4000);
+            }, 500);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ══════════════════════════════════════════════════
+    // GENERATE & SHOW CODE
+    // ══════════════════════════════════════════════════
+    function generateAndShowCode() {
+      const code = generateDataJS();
+      document.getElementById('code-output').textContent = code;
+      document.getElementById('save-status').textContent = '✅ Code generated — copy and save to data.js';
+      document.getElementById('save-status').className = 'save-status saved';
+    }
+
+    function generateDataJS() {
+      const fmt = arr => arr.map(s => `    "${s}"`).join(',\n');
+      return `// ============================================================
+// data.js — Site Image Data
+// Updated via Admin Panel
+// ============================================================
+
+const SITE_DATA = {
+
+  // Images shown in the scrolling marquee (top of page)
+  marqueeImages: [
+${fmt(marqueeList)}
+  ],
+
+  // Images shown in the portfolio gallery section
+  galleryImages: [
+${fmt(galleryList)}
+  ]
+
+};`;
+    }
+
+    function copyCode() {
+      const code = generateDataJS();
+      document.getElementById('code-output').textContent = code;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.getElementById('copy-btn');
+        btn.textContent = '✅ Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = '📋 Copy data.js Code';
+          btn.classList.remove('copied');
+        }, 2500);
+      });
+    }
+
+    function markUnsaved() {
+      document.getElementById('save-status').textContent = '● Unsaved changes';
+      document.getElementById('save-status').className = 'save-status unsaved';
+    }
+  </script>
+
+</body>
+</html>

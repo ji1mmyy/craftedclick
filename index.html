@@ -4,545 +4,137 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CraftedClick – YouTube Packaging System</title>
-
-  <!-- Google Fonts: Bebas Neue (headings) + DM Sans (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <style>
-    /* ============================================================
-       CSS VARIABLES – change colors/fonts here to restyle the site
-       ============================================================ */
     :root {
-      --bg:        #0a0a0a;       /* main background */
-      --surface:   #141414;       /* cards / sections */
-      --border:    #222;          /* subtle borders */
-      --yellow:    #f5c518;       /* accent color */
+      --bg:        #0a0a0a;
+      --surface:   #141414;
+      --border:    #222;
+      --yellow:    #f5c518;
       --white:     #ffffff;
       --gray:      #888;
       --font-head: 'Bebas Neue', sans-serif;
       --font-body: 'DM Sans', sans-serif;
-      --max-w:     1100px;        /* max page width */
+      --max-w:     1100px;
       --radius:    12px;
     }
 
-    /* ============================================================
-       RESET & BASE
-       ============================================================ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--white);
-      font-family: var(--font-body);
-      font-size: 16px;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-
+    body { background: var(--bg); color: var(--white); font-family: var(--font-body); font-size: 16px; line-height: 1.6; overflow-x: hidden; }
     a { color: inherit; text-decoration: none; }
     img { display: block; max-width: 100%; }
 
-    /* Utility: centered wrapper */
-    .container {
-      max-width: var(--max-w);
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* Utility: section spacing */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
     section { padding: 80px 0; }
 
-    /* Utility: section label above heading */
-    .label {
-      display: inline-block;
-      background: var(--yellow);
-      color: #000;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      padding: 4px 12px;
-      border-radius: 4px;
-      margin-bottom: 16px;
-    }
+    .label { display: inline-block; background: var(--yellow); color: #000; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 4px; margin-bottom: 16px; }
+    h2 { font-family: var(--font-head); font-size: clamp(36px, 5vw, 56px); letter-spacing: 1px; line-height: 1.05; }
+    .subtitle { color: var(--gray); font-size: 15px; max-width: 520px; margin-top: 10px; }
 
-    /* Utility: section heading */
-    h2 {
-      font-family: var(--font-head);
-      font-size: clamp(36px, 5vw, 56px);
-      letter-spacing: 1px;
-      line-height: 1.05;
-    }
-
-    /* Utility: subtext under headings */
-    .subtitle {
-      color: var(--gray);
-      font-size: 15px;
-      max-width: 520px;
-      margin-top: 10px;
-    }
-
-    /* ============================================================
-       NAVBAR
-       ============================================================ */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      background: rgba(10,10,10,0.85);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 64px;
-      max-width: var(--max-w);
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* Logo text */
-    .logo {
-      font-family: var(--font-head);
-      font-size: 24px;
-      letter-spacing: 2px;
-      color: var(--white);
-    }
+    /* NAVBAR */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(10,10,10,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+    .logo { font-family: var(--font-head); font-size: 24px; letter-spacing: 2px; }
     .logo span { color: var(--yellow); }
-
-    /* Nav links */
-    .nav-links {
-      display: flex;
-      gap: 32px;
-      list-style: none;
-    }
-    .nav-links a {
-      font-size: 14px;
-      color: var(--gray);
-      transition: color 0.2s;
-    }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { font-size: 14px; color: var(--gray); transition: color 0.2s; }
     .nav-links a:hover { color: var(--white); }
-
-    /* CTA button in nav */
-    .btn {
-      background: var(--yellow);
-      color: #000;
-      font-weight: 700;
-      font-size: 14px;
-      padding: 10px 22px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.15s;
-      display: inline-block;
-    }
+    .btn { background: var(--yellow); color: #000; font-weight: 700; font-size: 14px; padding: 10px 22px; border-radius: 8px; border: none; cursor: pointer; transition: opacity 0.2s, transform 0.15s; display: inline-block; }
     .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { width: 24px; height: 2px; background: var(--white); border-radius: 2px; transition: 0.3s; }
 
-    /* Mobile menu toggle (hamburger) */
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 4px;
-    }
-    .hamburger span {
-      width: 24px; height: 2px;
-      background: var(--white);
-      border-radius: 2px;
-      transition: 0.3s;
-    }
-
-    /* ============================================================
-       HERO
-       ============================================================ */
-    #hero {
-      padding-top: 160px;
-      padding-bottom: 60px;
-      text-align: center;
-      position: relative;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 50px;
-      padding: 6px 16px;
-      font-size: 13px;
-      color: var(--gray);
-      margin-bottom: 28px;
-    }
-    .badge-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: #22c55e; /* green dot = "live" */
-    }
-
-    #hero h1 {
-      font-family: var(--font-head);
-      font-size: clamp(42px, 7vw, 82px);
-      letter-spacing: 1px;
-      line-height: 1.0;
-      max-width: 800px;
-      margin: 0 auto 20px;
-    }
+    /* HERO */
+    #hero { padding-top: 160px; padding-bottom: 60px; text-align: center; }
+    .badge { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 50px; padding: 6px 16px; font-size: 13px; color: var(--gray); margin-bottom: 28px; }
+    .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }
+    #hero h1 { font-family: var(--font-head); font-size: clamp(42px, 7vw, 82px); letter-spacing: 1px; line-height: 1.0; max-width: 800px; margin: 0 auto 20px; }
     #hero h1 .accent { color: var(--yellow); }
-
-    #hero p {
-      color: var(--gray);
-      font-size: 16px;
-      max-width: 560px;
-      margin: 0 auto 36px;
-      line-height: 1.7;
-    }
-
-    .hero-btns {
-      display: flex;
-      gap: 14px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--white);
-      border: 1px solid var(--border);
-      font-weight: 600;
-      font-size: 14px;
-      padding: 10px 22px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-    }
+    #hero p { color: var(--gray); font-size: 16px; max-width: 560px; margin: 0 auto 36px; line-height: 1.7; }
+    .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-outline { background: transparent; color: var(--white); border: 1px solid var(--border); font-weight: 600; font-size: 14px; padding: 10px 22px; border-radius: 8px; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
     .btn-outline:hover { border-color: var(--white); background: rgba(255,255,255,0.05); }
 
-    /* ============================================================
-       THUMBNAIL SCROLL MARQUEE
-       ============================================================ */
-    .marquee-section {
-      overflow: hidden;
-      padding: 40px 0;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+    /* MARQUEE */
+    .marquee-section { overflow: hidden; padding: 40px 0; display: flex; flex-direction: column; gap: 16px; }
+    .marquee-track { display: flex; gap: 14px; width: max-content; animation: scroll-left 35s linear infinite; }
+    .marquee-track.reverse { animation: scroll-right 38s linear infinite; }
+    @keyframes scroll-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes scroll-right { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+    .marquee-track img { width: 260px; height: 146px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
 
-    .marquee-track {
-      display: flex;
-      gap: 14px;
-      width: max-content;
-      animation: scroll-left 35s linear infinite;
-    }
-    .marquee-track.reverse {
-      animation: scroll-right 38s linear infinite;
-    }
-
-    @keyframes scroll-left {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
-    @keyframes scroll-right {
-      from { transform: translateX(-50%); }
-      to   { transform: translateX(0); }
-    }
-
-    .marquee-track img {
-      width: 260px;
-      height: 146px;
-      object-fit: cover;
-      border-radius: 8px;
-      flex-shrink: 0;
-    }
-
-    /* ============================================================
-       WHY CRAFTEDCLICK
-       ============================================================ */
+    /* WHY */
     #about { background: var(--bg); }
-
     .about-header { text-align: center; margin-bottom: 56px; }
     .about-header .subtitle { margin: 10px auto 0; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 24px; transition: border-color 0.25s, transform 0.2s; }
+    .feature-card:hover { border-color: var(--yellow); transform: translateY(-3px); }
+    .feature-icon { font-size: 28px; margin-bottom: 14px; }
+    .feature-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { color: var(--gray); font-size: 14px; line-height: 1.6; }
 
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 20px;
-    }
-
-    .feature-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px 24px;
-      transition: border-color 0.25s, transform 0.2s;
-    }
-    .feature-card:hover {
-      border-color: var(--yellow);
-      transform: translateY(-3px);
-    }
-
-    .feature-icon {
-      font-size: 28px;
-      margin-bottom: 14px;
-    }
-
-    .feature-card h3 {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .feature-card p {
-      color: var(--gray);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    /* ============================================================
-       PROCESS
-       ============================================================ */
+    /* PROCESS */
     #process { background: var(--surface); }
-
     .process-header { text-align: center; margin-bottom: 56px; }
-    .process-header .subtitle { margin: 10px auto 0; }
-
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-
-    .step {
-      display: flex;
-      align-items: flex-start;
-      gap: 24px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px 24px;
-      transition: border-color 0.2s;
-    }
+    .steps { display: flex; flex-direction: column; gap: 20px; max-width: 700px; margin: 0 auto; }
+    .step { display: flex; align-items: flex-start; gap: 24px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 24px; transition: border-color 0.2s; }
     .step:hover { border-color: var(--yellow); }
-
-    .step-num {
-      background: var(--yellow);
-      color: #000;
-      font-family: var(--font-head);
-      font-size: 22px;
-      width: 44px; height: 44px;
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-
+    .step-num { background: var(--yellow); color: #000; font-family: var(--font-head); font-size: 22px; width: 44px; height: 44px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .step-text h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
-    .step-text p  { color: var(--gray); font-size: 14px; }
+    .step-text p { color: var(--gray); font-size: 14px; }
 
-    /* ============================================================
-       TESTIMONIALS
-       ============================================================ */
+    /* TESTIMONIALS */
     #testimonials { background: var(--bg); }
-
     .test-header { text-align: center; margin-bottom: 56px; }
-
-    .testimonials-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-    }
-
-    .testimonial-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px 24px;
-    }
-
+    .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .testimonial-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 24px; }
     .stars { color: var(--yellow); font-size: 16px; margin-bottom: 14px; }
-
-    .testimonial-card p {
-      font-size: 14px;
-      color: #ccc;
-      line-height: 1.7;
-      margin-bottom: 20px;
-    }
-
-    .author {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .author-avatar {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      background: var(--border);
-      overflow: hidden;
-      font-size: 18px;
-      display: flex; align-items: center; justify-content: center;
-    }
+    .testimonial-card p { font-size: 14px; color: #ccc; line-height: 1.7; margin-bottom: 20px; }
+    .author { display: flex; align-items: center; gap: 12px; }
+    .author-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--border); font-size: 18px; display: flex; align-items: center; justify-content: center; }
     .author-name { font-weight: 700; font-size: 14px; }
     .author-handle { color: var(--gray); font-size: 12px; }
 
-    /* ============================================================
-       PORTFOLIO GALLERY
-       ============================================================ */
+    /* GALLERY */
     #gallery { background: var(--surface); }
-
     .gallery-header { text-align: center; margin-bottom: 48px; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .gallery-grid img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; transition: transform 0.25s, box-shadow 0.25s; cursor: pointer; }
+    .gallery-grid img:hover { transform: scale(1.03); box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
 
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 14px;
-    }
-
-    .gallery-grid img {
-      width: 100%;
-      aspect-ratio: 16/9;
-      object-fit: cover;
-      border-radius: 8px;
-      transition: transform 0.25s, box-shadow 0.25s;
-      cursor: pointer;
-    }
-    .gallery-grid img:hover {
-      transform: scale(1.03);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-    }
-
-    .gallery-more {
-      text-align: center;
-      margin-top: 36px;
-    }
-
-    /* ============================================================
-       FAQ
-       ============================================================ */
+    /* FAQ */
     #faq { background: var(--bg); }
-
     .faq-header { text-align: center; margin-bottom: 48px; }
-
-    .faq-list {
-      max-width: 700px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .faq-item {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-
-    .faq-question {
-      width: 100%;
-      background: none;
-      border: none;
-      color: var(--white);
-      font-family: var(--font-body);
-      font-size: 15px;
-      font-weight: 600;
-      text-align: left;
-      padding: 20px 24px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: color 0.2s;
-    }
+    .faq-list { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .faq-question { width: 100%; background: none; border: none; color: var(--white); font-family: var(--font-body); font-size: 15px; font-weight: 600; text-align: left; padding: 20px 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: color 0.2s; }
     .faq-question:hover { color: var(--yellow); }
-
-    .faq-icon {
-      font-size: 20px;
-      transition: transform 0.3s;
-      flex-shrink: 0;
-    }
+    .faq-icon { font-size: 20px; transition: transform 0.3s; flex-shrink: 0; }
     .faq-item.open .faq-icon { transform: rotate(45deg); }
-
-    .faq-answer {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.35s ease, padding 0.3s;
-    }
-    .faq-answer p {
-      color: var(--gray);
-      font-size: 14px;
-      padding: 0 24px 20px;
-      line-height: 1.7;
-    }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .faq-answer p { color: var(--gray); font-size: 14px; padding: 0 24px 20px; line-height: 1.7; }
     .faq-item.open .faq-answer { max-height: 300px; }
 
-    /* ============================================================
-       CTA SECTION
-       ============================================================ */
-    #getintouch {
-      background: linear-gradient(135deg, #111 0%, #1a1500 100%);
-      text-align: center;
-      border-top: 1px solid var(--border);
-    }
+    /* CTA */
+    #getintouch { background: linear-gradient(135deg, #111 0%, #1a1500 100%); text-align: center; border-top: 1px solid var(--border); }
+    #getintouch h2 { font-size: clamp(36px, 5vw, 60px); margin-bottom: 16px; }
+    #getintouch p { color: var(--gray); max-width: 440px; margin: 0 auto 36px; font-size: 15px; }
 
-    #getintouch h2 {
-      font-size: clamp(36px, 5vw, 60px);
-      margin-bottom: 16px;
-    }
-    #getintouch p {
-      color: var(--gray);
-      max-width: 440px;
-      margin: 0 auto 36px;
-      font-size: 15px;
-    }
-
-    /* ============================================================
-       FOOTER
-       ============================================================ */
-    footer {
-      background: var(--bg);
-      border-top: 1px solid var(--border);
-      padding: 32px 24px;
-      text-align: center;
-      color: var(--gray);
-      font-size: 13px;
-    }
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 32px 24px; text-align: center; color: var(--gray); font-size: 13px; }
     footer a { color: var(--gray); margin: 0 12px; }
     footer a:hover { color: var(--white); }
 
-    /* ============================================================
-       RESPONSIVE (mobile)
-       ============================================================ */
+    /* RESPONSIVE */
     @media (max-width: 700px) {
       .nav-links, .nav-links + .btn { display: none; }
       .hamburger { display: flex; }
-
-      /* Mobile nav open state */
-      nav.mobile-open .nav-links {
-        display: flex;
-        flex-direction: column;
-        position: absolute;
-        top: 64px; left: 0; right: 0;
-        background: #0f0f0f;
-        padding: 20px 24px;
-        gap: 20px;
-        border-bottom: 1px solid var(--border);
-      }
-      nav.mobile-open .nav-links + .btn {
-        display: block;
-        position: absolute;
-        top: 108px; right: 24px;
-      }
-
+      nav.mobile-open .nav-links { display: flex; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: #0f0f0f; padding: 20px 24px; gap: 20px; border-bottom: 1px solid var(--border); }
       #hero { padding-top: 120px; }
       .features-grid { grid-template-columns: 1fr; }
     }
@@ -550,58 +142,24 @@
 </head>
 <body>
 
-  <!-- ============================================================
-       NAVBAR
-       ============================================================ -->
   <nav id="navbar">
     <div class="nav-inner">
-      <!-- Logo: change "Crafted" and "Click" to your brand name -->
       <a href="#" class="logo">Crafted<span>Click</span></a>
-
-      <!-- Navigation links -->
       <ul class="nav-links">
         <li><a href="#about">About</a></li>
         <li><a href="#gallery">Gallery</a></li>
         <li><a href="#faq">FAQs</a></li>
       </ul>
-
-      <!-- CTA button -->
       <a href="#getintouch" class="btn">Get in Touch</a>
-
-      <!-- Hamburger for mobile -->
-      <div class="hamburger" id="hamburger" aria-label="Open menu">
-        <span></span><span></span><span></span>
-      </div>
+      <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
     </div>
   </nav>
 
-
-  <!-- ============================================================
-       HERO SECTION
-       ============================================================ -->
   <section id="hero">
     <div class="container">
-      <!-- Small badge at the top -->
-      <div class="badge">
-        <span class="badge-dot"></span>
-        Limited Spots Available
-      </div>
-
-      <!-- Main headline — edit the text between the tags -->
-      <h1>
-        A Proven YouTube Packaging System
-        <span class="accent">Built to Win the Click.</span>
-      </h1>
-
-      <!-- Sub-description -->
-      <p>
-        Performance-driven YouTube packaging system designed to help creators,
-        founders, and brands turn strong content into clicked videos — by aligning
-        <strong>thumbnails and titles</strong> around viewer psychology, clarity,
-        and intent, not trends or guesswork.
-      </p>
-
-      <!-- Two buttons -->
+      <div class="badge"><span class="badge-dot"></span>Limited Spots Available</div>
+      <h1>A Proven YouTube Packaging System <span class="accent">Built to Win the Click.</span></h1>
+      <p>Performance-driven YouTube packaging system designed to help creators, founders, and brands turn strong content into clicked videos — by aligning <strong>thumbnails and titles</strong> around viewer psychology, clarity, and intent, not trends or guesswork.</p>
       <div class="hero-btns">
         <a href="#gallery" class="btn">View Gallery</a>
         <a href="#getintouch" class="btn-outline">Let's Work →</a>
@@ -609,420 +167,141 @@
     </div>
   </section>
 
-
-  <!-- ============================================================
-       SCROLLING THUMBNAIL MARQUEE
-       Replace the src="" values with your own image URLs
-       ============================================================ -->
+  <!-- MARQUEE: images loaded from data.js -->
   <div class="marquee-section">
-    <!-- Row 1: scrolls left -->
-    <div class="marquee-track" id="row1">
-      <img src="https://i.ibb.co/twmkd038/05.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/Pvy4K6qV/04.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/60Rmjd0q/28.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/ccg682tX/18.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/B5LySPTn/37.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/YF2907qF/19.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/Jj9r1Yzc/43.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/tMKtkRZ7/01.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/5xCT1WBz/40.webp" alt="thumbnail" />
-      <!-- duplicated for seamless loop -->
-      <img src="https://i.ibb.co/twmkd038/05.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/Pvy4K6qV/04.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/60Rmjd0q/28.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/ccg682tX/18.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/B5LySPTn/37.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/YF2907qF/19.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/Jj9r1Yzc/43.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/tMKtkRZ7/01.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/5xCT1WBz/40.webp" alt="thumbnail" />
-    </div>
-
-    <!-- Row 2: scrolls right (reverse direction) -->
-    <div class="marquee-track reverse" id="row2">
-      <img src="https://i.ibb.co/gZNdz51Z/22.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/PvPt38Ys/41.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/8nygR2Gg/32.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/nq1hRwDx/26.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/ymTCThQ5/02.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/G3T46dy0/35.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/0yY8bF7J/21.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/6RRmrdx1/20.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/7x3vt3KC/24.webp" alt="thumbnail" />
-      <!-- duplicated -->
-      <img src="https://i.ibb.co/gZNdz51Z/22.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/PvPt38Ys/41.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/8nygR2Gg/32.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/nq1hRwDx/26.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/ymTCThQ5/02.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/G3T46dy0/35.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/0yY8bF7J/21.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/6RRmrdx1/20.webp" alt="thumbnail" />
-      <img src="https://i.ibb.co/7x3vt3KC/24.webp" alt="thumbnail" />
-    </div>
+    <div class="marquee-track" id="marquee-row1"></div>
+    <div class="marquee-track reverse" id="marquee-row2"></div>
   </div>
 
-
-  <!-- ============================================================
-       WHY CRAFTEDCLICK
-       ============================================================ -->
   <section id="about">
     <div class="container">
       <div class="about-header">
         <span class="label">About</span>
         <h2>Why CraftedClick?</h2>
-        <p class="subtitle">
-          Premium thumbnail design for creators who care about performance
-          as much as aesthetics.
-        </p>
+        <p class="subtitle">Premium thumbnail design for creators who care about performance as much as aesthetics.</p>
       </div>
-
-      <!-- 4 feature cards — edit the emoji, title, and description -->
       <div class="features-grid">
-
-        <div class="feature-card">
-          <div class="feature-icon">🎯</div>
-          <h3>Smart Design</h3>
-          <p>
-            Data-driven, not just pretty. Studying what works in your niche
-            and applying it directly to your thumbnails.
-          </p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🏷️</div>
-          <h3>Brand Consistency</h3>
-          <p>
-            Every thumbnail looks like it belongs to you — building
-            recognizable visual language your audience trusts.
-          </p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🚫</div>
-          <h3>No Clickbait</h3>
-          <p>
-            We craft honest, compelling thumbnails that attract the right
-            viewers and keep your reputation intact.
-          </p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">⚡</div>
-          <h3>Expert Attention</h3>
-          <p>
-            Every project gets personal, focused attention — no outsourcing,
-            no templates, no shortcuts.
-          </p>
-        </div>
-
+        <div class="feature-card"><div class="feature-icon">🎯</div><h3>Smart Design</h3><p>Data-driven, not just pretty. Studying what works in your niche and applying it directly to your thumbnails.</p></div>
+        <div class="feature-card"><div class="feature-icon">🏷️</div><h3>Brand Consistency</h3><p>Every thumbnail looks like it belongs to you — building recognizable visual language your audience trusts.</p></div>
+        <div class="feature-card"><div class="feature-icon">🚫</div><h3>No Clickbait</h3><p>We craft honest, compelling thumbnails that attract the right viewers and keep your reputation intact.</p></div>
+        <div class="feature-card"><div class="feature-icon">⚡</div><h3>Expert Attention</h3><p>Every project gets personal, focused attention — no outsourcing, no templates, no shortcuts.</p></div>
       </div>
     </div>
   </section>
 
-
-  <!-- ============================================================
-       3-STEP PROCESS
-       ============================================================ -->
   <section id="process">
     <div class="container">
       <div class="process-header">
         <span class="label">How It Works</span>
         <h2>Easy Process, Built to Deliver.</h2>
-        <p class="subtitle">
-          The process adapts to every client and their needs, but here are
-          the steps we usually go through.
-        </p>
+        <p class="subtitle">The process adapts to every client and their needs, but here are the steps we usually go through.</p>
       </div>
-
       <div class="steps">
-
-        <!-- Step 1 -->
-        <div class="step">
-          <div class="step-num">1</div>
-          <div class="step-text">
-            <h3>Submit Your Request</h3>
-            <p>
-              Fill out a simple brief with your video topic, style preferences,
-              and any reference images you love.
-            </p>
-          </div>
-        </div>
-
-        <!-- Step 2 -->
-        <div class="step">
-          <div class="step-num">2</div>
-          <div class="step-text">
-            <h3>We Craft the Thumbnails</h3>
-            <p>
-              After the brief, we design your thumbnail with full attention
-            to psychology, composition, and platform best practices.
-            </p>
-          </div>
-        </div>
-
-        <!-- Step 3 -->
-        <div class="step">
-          <div class="step-num">3</div>
-          <div class="step-text">
-            <h3>Refine Until It's Right</h3>
-            <p>
-              We offer revisions until the design is exactly what you envisioned.
-              Your satisfaction is the finish line.
-            </p>
-          </div>
-        </div>
-
+        <div class="step"><div class="step-num">1</div><div class="step-text"><h3>Submit Your Request</h3><p>Fill out a simple brief with your video topic, style preferences, and any reference images you love.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text"><h3>We Craft the Thumbnails</h3><p>After the brief, we design your thumbnail with full attention to psychology, composition, and platform best practices.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text"><h3>Refine Until It's Right</h3><p>We offer revisions until the design is exactly what you envisioned. Your satisfaction is the finish line.</p></div></div>
       </div>
     </div>
   </section>
 
-
-  <!-- ============================================================
-       TESTIMONIALS
-       ============================================================ -->
   <section id="testimonials">
     <div class="container">
-      <div class="test-header">
-        <span class="label">Reviews</span>
-        <h2>What Our Clients Say...</h2>
-      </div>
-
+      <div class="test-header"><span class="label">Reviews</span><h2>What Our Clients Say...</h2></div>
       <div class="testimonials-grid">
-
-        <!-- Testimonial 1 — edit name, handle, and quote -->
-        <div class="testimonial-card">
-          <div class="stars">★★★★★</div>
-          <p>
-            "The thumbnails completely transformed my click-through rate.
-            I went from 2% to over 8% CTR in just two weeks after the redesign."
-          </p>
-          <div class="author">
-            <div class="author-avatar">😊</div>
-            <div>
-              <div class="author-name">Fouad Belgroun</div>
-              <div class="author-handle">@fouadbelgroun</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Testimonial 2 -->
-        <div class="testimonial-card">
-          <div class="stars">★★★★★</div>
-          <p>
-            "Fast turnaround, great communication, and the designs look
-            absolutely incredible. Highly recommend CraftedClick."
-          </p>
-          <div class="author">
-            <div class="author-avatar">🎙️</div>
-            <div>
-              <div class="author-name">Adam A.</div>
-              <div class="author-handle">Podcast Creator</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Testimonial 3 -->
-        <div class="testimonial-card">
-          <div class="stars">★★★★★</div>
-          <p>
-            "Honestly, best investment for my channel. The thumbnails feel
-            premium yet super click-worthy. Worth every penny."
-          </p>
-          <div class="author">
-            <div class="author-avatar">📈</div>
-            <div>
-              <div class="author-name">Vicky Romary</div>
-              <div class="author-handle">Business & Finance</div>
-            </div>
-          </div>
-        </div>
-
+        <div class="testimonial-card"><div class="stars">★★★★★</div><p>"The thumbnails completely transformed my click-through rate. I went from 2% to over 8% CTR in just two weeks after the redesign."</p><div class="author"><div class="author-avatar">😊</div><div><div class="author-name">Fouad Belgroun</div><div class="author-handle">@fouadbelgroun</div></div></div></div>
+        <div class="testimonial-card"><div class="stars">★★★★★</div><p>"Fast turnaround, great communication, and the designs look absolutely incredible. Highly recommend CraftedClick."</p><div class="author"><div class="author-avatar">🎙️</div><div><div class="author-name">Adam A.</div><div class="author-handle">Podcast Creator</div></div></div></div>
+        <div class="testimonial-card"><div class="stars">★★★★★</div><p>"Honestly, best investment for my channel. The thumbnails feel premium yet super click-worthy. Worth every penny."</p><div class="author"><div class="author-avatar">📈</div><div><div class="author-name">Vicky Romary</div><div class="author-handle">Business & Finance</div></div></div></div>
       </div>
     </div>
   </section>
 
-
-  <!-- ============================================================
-       PORTFOLIO GALLERY
-       Add or remove <img> tags to update your portfolio
-       ============================================================ -->
   <section id="gallery">
     <div class="container">
-      <div class="gallery-header">
-        <span class="label">Portfolio</span>
-        <h2>Our Work</h2>
-        <p class="subtitle">A selection of thumbnails crafted for our clients.</p>
-      </div>
-
-      <div class="gallery-grid">
-        <img src="https://i.ibb.co/twmkd038/05.webp" alt="YouTube thumbnail" />
-        <img src="https://i.ibb.co/Pvy4K6qV/04.webp" alt="YouTube thumbnail" />
-        <img src="https://i.ibb.co/60Rmjd0q/28.webp" alt="YouTube thumbnail" />
-        <img src="https://i.ibb.co/ccg682tX/18.webp" alt="YouTube thumbnail" />
-        <img src="https://i.ibb.co/B5LySPTn/37.webp" alt="YouTube thumbnail" />
-        <img src="https://i.ibb.co/YF2907qF/19.webp" alt="YouTube thumbnail" />
-        <img src="https://i.ibb.co/Jj9r1Yzc/43.webp" alt="YouTube thumbnail" />
-        <img src="https://i.ibb.co/tMKtkRZ7/01.webp" alt="YouTube thumbnail" />
-        <img src="https://i.ibb.co/5xCT1WBz/40.webp" alt="YouTube thumbnail" />
-        <img src="https://i.ibb.co/gZNdz51Z/22.webp" alt="YouTube thumbnail" />
-        <img src="https://i.ibb.co/PvPt38Ys/41.webp" alt="YouTube thumbnail" />
-        <img src="https://i.ibb.co/8nygR2Gg/32.webp" alt="YouTube thumbnail" />
-      </div>
+      <div class="gallery-header"><span class="label">Portfolio</span><h2>Our Work</h2><p class="subtitle">A selection of thumbnails crafted for our clients.</p></div>
+      <!-- Gallery loaded from data.js -->
+      <div class="gallery-grid" id="gallery-grid"></div>
     </div>
   </section>
 
-
-  <!-- ============================================================
-       FAQ ACCORDION
-       Click a question to expand/collapse the answer
-       ============================================================ -->
   <section id="faq">
     <div class="container">
-      <div class="faq-header">
-        <span class="label">FAQ</span>
-        <h2>Frequently Asked Questions</h2>
-      </div>
-
+      <div class="faq-header"><span class="label">FAQ</span><h2>Frequently Asked Questions</h2></div>
       <div class="faq-list">
-
-        <!-- FAQ Item — add as many as you need -->
-        <div class="faq-item">
-          <button class="faq-question">
-            Do you offer free trials or refunds?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              We don't offer free trials, but we do provide revisions until
-              you're happy. If there's a genuine issue, we'll work it out.
-            </p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-question">
-            Do you offer revisions?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              Yes — every package includes revisions. We iterate until the
-              thumbnail matches your vision and performs.
-            </p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-question">
-            What's your turnaround time?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              Most thumbnails are delivered within 24–48 hours depending on
-              complexity and queue. Rush delivery is available.
-            </p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-question">
-            What programs do you design in?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              We use Photoshop and Figma primarily, ensuring high-resolution,
-              export-ready files in any format you need.
-            </p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-question">
-            What do you need from me to create a thumbnail?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              A brief describing your video topic, any reference images you like,
-              your brand colors/fonts (if any), and ideally a photo of yourself
-              or relevant visuals.
-            </p>
-          </div>
-        </div>
-
+        <div class="faq-item"><button class="faq-question">Do you offer free trials or refunds? <span class="faq-icon">+</span></button><div class="faq-answer"><p>We don't offer free trials, but we do provide revisions until you're happy. If there's a genuine issue, we'll work it out.</p></div></div>
+        <div class="faq-item"><button class="faq-question">Do you offer revisions? <span class="faq-icon">+</span></button><div class="faq-answer"><p>Yes — every package includes revisions. We iterate until the thumbnail matches your vision and performs.</p></div></div>
+        <div class="faq-item"><button class="faq-question">What's your turnaround time? <span class="faq-icon">+</span></button><div class="faq-answer"><p>Most thumbnails are delivered within 24–48 hours depending on complexity and queue. Rush delivery is available.</p></div></div>
+        <div class="faq-item"><button class="faq-question">What programs do you design in? <span class="faq-icon">+</span></button><div class="faq-answer"><p>We use Photoshop and Figma primarily, ensuring high-resolution, export-ready files in any format you need.</p></div></div>
+        <div class="faq-item"><button class="faq-question">What do you need from me to create a thumbnail? <span class="faq-icon">+</span></button><div class="faq-answer"><p>A brief describing your video topic, any reference images you like, your brand colors/fonts (if any), and ideally a photo of yourself or relevant visuals.</p></div></div>
       </div>
     </div>
   </section>
 
-
-  <!-- ============================================================
-       CTA / GET IN TOUCH
-       ============================================================ -->
   <section id="getintouch">
     <div class="container">
       <span class="label">Let's Go</span>
       <h2>Ready to Get More Eyes<br>on Your Videos?</h2>
       <p>Limited spots available. Reach out and let's start crafting thumbnails that actually get clicked.</p>
-      <a href="mailto:hello@crafted.click" class="btn" style="font-size:16px; padding:14px 32px;">
-        Let's do it! →
-      </a>
+      <a href="mailto:hello@crafted.click" class="btn" style="font-size:16px; padding:14px 32px;">Let's do it! →</a>
     </div>
   </section>
 
-
-  <!-- ============================================================
-       FOOTER
-       ============================================================ -->
   <footer>
-    <p>
-      © 2025 CraftedClick &nbsp;|&nbsp;
-      <a href="#">Terms & Conditions</a>
-      <a href="#about">About</a>
-    </p>
+    <p>© 2025 CraftedClick &nbsp;|&nbsp;<a href="#">Terms & Conditions</a><a href="#about">About</a></p>
   </footer>
 
+  <!-- Load site data (image order, gallery images) -->
+  <script src="data.js"></script>
 
-  <!-- ============================================================
-       JAVASCRIPT
-       Small bits of interactivity: mobile menu + FAQ accordion
-       ============================================================ -->
   <script>
-    // ── MOBILE HAMBURGER MENU ──────────────────────────────────
+    // ── NAVBAR ──────────────────────────────────────────
     const hamburger = document.getElementById('hamburger');
     const navbar    = document.getElementById('navbar');
+    hamburger.addEventListener('click', () => navbar.classList.toggle('mobile-open'));
+    document.querySelectorAll('.nav-links a').forEach(l => l.addEventListener('click', () => navbar.classList.remove('mobile-open')));
+    window.addEventListener('scroll', () => { navbar.style.boxShadow = window.scrollY > 10 ? '0 4px 24px rgba(0,0,0,0.5)' : 'none'; });
 
-    hamburger.addEventListener('click', () => {
-      navbar.classList.toggle('mobile-open');
+    // ── FAQ ──────────────────────────────────────────────
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => btn.parentElement.classList.toggle('open'));
     });
 
-    // Close mobile menu when a link is clicked
-    document.querySelectorAll('.nav-links a').forEach(link => {
-      link.addEventListener('click', () => navbar.classList.remove('mobile-open'));
-    });
+    // ── BUILD MARQUEE FROM data.js ────────────────────────
+    function buildMarquee() {
+      const row1 = document.getElementById('marquee-row1');
+      const row2 = document.getElementById('marquee-row2');
+      // Split images into two halves
+      const half = Math.ceil(SITE_DATA.marqueeImages.length / 2);
+      const set1 = SITE_DATA.marqueeImages.slice(0, half);
+      const set2 = SITE_DATA.marqueeImages.slice(half);
 
-
-    // ── FAQ ACCORDION ─────────────────────────────────────────
-    document.querySelectorAll('.faq-question').forEach(button => {
-      button.addEventListener('click', () => {
-        // Get the parent .faq-item
-        const item = button.parentElement;
-        // Toggle the 'open' class (CSS handles the animation)
-        item.classList.toggle('open');
-      });
-    });
-
-
-    // ── NAVBAR: add shadow on scroll ──────────────────────────
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 10) {
-        navbar.style.boxShadow = '0 4px 24px rgba(0,0,0,0.5)';
-      } else {
-        navbar.style.boxShadow = 'none';
+      // Duplicate each set for seamless looping
+      function makeImgs(arr) {
+        return [...arr, ...arr].map(src => {
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = 'thumbnail';
+          return img;
+        });
       }
-    });
+
+      makeImgs(set1).forEach(img => row1.appendChild(img));
+      makeImgs(set2).forEach(img => row2.appendChild(img));
+    }
+
+    // ── BUILD GALLERY FROM data.js ────────────────────────
+    function buildGallery() {
+      const grid = document.getElementById('gallery-grid');
+      grid.innerHTML = '';
+      SITE_DATA.galleryImages.forEach(src => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'YouTube thumbnail';
+        grid.appendChild(img);
+      });
+    }
+
+    buildMarquee();
+    buildGallery();
   </script>
 
 </body>
